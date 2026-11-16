@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Currículo</title>
+<style>
+  :root { --accent: #1f4e79; --accent-soft: #e8eff6; --accent2: #d97706; --text: #222; --muted: #666;
+          --page-margin: 16mm; --gap: 20px; --fs: 13px; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #eceff1; color: var(--text); text-align: justify;
+         font: var(--fs)/1.5 "Segoe UI", Helvetica, Arial, sans-serif; }
+
+  .toolbar { position: sticky; top: 0; z-index: 10; display: flex; gap: 16px; flex-wrap: wrap;
+             align-items: center; justify-content: center; padding: 10px 16px; background: #fff;
+             border-bottom: 1px solid #ddd; font-size: 13px; }
+  .toolbar label { display: flex; align-items: center; gap: 6px; }
+  .toolbar select, .toolbar input[type=color], .toolbar button { font: inherit; padding: 4px 8px; }
+  .toolbar button { cursor: pointer; }
+
+  .sheet { position: relative; width: 210mm; height: 297mm; margin: 16px auto; padding: var(--page-margin);
+           display: flex; flex-direction: column; justify-content: space-evenly;
+           background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,.15); overflow: hidden; }
+  .sheet:last-child { justify-content: flex-start; }
+  .blk { margin-bottom: var(--gap); }
+  .blk.tight, .tight { margin-bottom: 6px; }
+  .blk > .tight:last-child { margin-bottom: 0; }
+  .sheet .blk:last-child { margin-bottom: 0; }
+  .measure { position: absolute; left: -99999px; top: 0; visibility: hidden;
+             width: calc(210mm - 2 * var(--page-margin)); }
+
+  header { display: flex; align-items: center; justify-content: space-between; gap: 20px;
+           border-bottom: 3px solid var(--accent2); padding-bottom: 14px; }
+  .head-text { flex: 1; min-width: 0; }
+  header.photo-left { flex-direction: row-reverse; }
+  .photo { width: var(--ps, 34mm); height: var(--ps, 34mm); flex: none; margin-left: auto; border-radius: 50%;
+           overflow: hidden; border: 3px solid var(--accent2); }
+  .photo img { display: block; width: 100%; height: 100%; object-fit: cover;
+               object-position: var(--px, 50%) var(--py, 50%);
+               transform: scale(var(--pz, 1)); transform-origin: var(--px, 50%) var(--py, 50%); }
+  h1 { margin: 0; font-size: calc(var(--fs) + 15px); font-weight: 600; color: var(--accent); letter-spacing: .3px; text-align: left; }
+  .subtitle { margin: 2px 0 10px; font-size: calc(var(--fs) + 2px); color: var(--muted); text-align: left; }
+  .contact { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: var(--fs); text-align: left; }
+  .contact span, .contact a { display: inline-flex; align-items: center; gap: 6px; }
+  .contact svg { width: 1.1em; height: 1.1em; fill: none; stroke: var(--accent2); stroke-width: 2;
+                 stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  .contact a { color: inherit; text-decoration: none; }
+
+  section { margin: 0; }
+  h2 { margin: 0 0 10px; font-size: var(--fs); text-transform: uppercase; letter-spacing: 1.4px; text-align: left;
+       color: var(--accent); border-bottom: 1px solid var(--accent-soft); border-left: 4px solid var(--accent2);
+       padding: 2px 0 4px 8px; }
+  p { margin: 0 0 6px; }
+
+  .job { break-inside: avoid; }
+  .job-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+  .job-head strong { font-size: calc(var(--fs) + 1px); }
+  .period { color: var(--accent2); font-weight: 600; font-size: calc(var(--fs) - 1px); white-space: nowrap; }
+  .role { color: var(--accent); font-weight: 600; }
+  .meta { color: var(--muted); font-size: calc(var(--fs) - 1px); }
+  .segment { margin-top: 2px; color: var(--muted); font-size: calc(var(--fs) - 1px); }
+  .segment b { color: var(--accent); }
+  .job-body { margin-top: 8px; }
+  ul { margin: 0; padding-left: 16px; }
+  li { margin-bottom: 4px; }
+  li::marker { color: var(--accent2); }
+  .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+  .tag { background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent2);
+         font-size: calc(var(--fs) - 2px); padding: 1px 8px; border-radius: 10px; }
+
+  .edu { display: flex; justify-content: space-between; margin-bottom: 6px; }
+  .skills div { margin-bottom: 0; }
+  .skills b { color: var(--accent2); }
+
+  @page { size: A4; margin: 0; }
+  .ats { width: 210mm; max-width: 100%; margin: 12px auto 0; background: #fff; padding: 10px 16px; font-size: 13px;
+         text-align: left; border: 1px solid #ddd; }
+  .ats summary { cursor: pointer; font-weight: 600; }
+  .ats textarea { width: 100%; height: 110px; margin: 8px 0; font: inherit; }
+  .ats .kw { display: inline-block; margin: 2px 4px 2px 0; padding: 1px 8px; border-radius: 10px; font-size: 12px; }
+  .ats .ok { background: #e3f4e8; color: #1b5e30; }
+  .ats .miss { background: #fdeaea; color: #8a1c1c; }
+  @media print {
+    body { background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .toolbar { display: none; }
+    .ats { display: none; }
+    .sheet { margin: 0; box-shadow: none; height: 296mm; break-after: page; }
+    .sheet:last-child { break-after: auto; }
+    .page { margin: 0; box-shadow: none; width: auto; min-height: 0; padding: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <label>Idioma / Language
+    <select id="lang"><option value="pt">Português</option><option value="en">English</option></select>
+  </label>
+  <label>Paleta / Palette
+    <select id="palette"></select>
+  </label>
+  <label>Principal / Primary <input type="color" id="custom" value="#1f4e79"></label>
+  <label>Secundária / Secondary <input type="color" id="custom2" value="#d97706"></label>
+  <label>Fonte base / Base font (px)
+    <input type="number" id="fs" min="9" max="18" step="0.5" value="13" style="width:60px">
+  </label>
+  <label>Atividades / Activities
+    <select id="mode"><option value="bullets">Tópicos / Bullets</option><option value="full">Texto completo / Full text</option></select>
+  </label>
+  <label><input type="checkbox" id="optSummary" checked> Resumo / Summary</label>
+  <label><input type="checkbox" id="optSkills" checked> Skills</label>
+  <label><input type="checkbox" id="optTags" checked> Tags</label>
+  <label><input type="checkbox" id="optLangs" checked> Idiomas / Languages</label>
+  <label title="Contatos com rótulo de texto em vez de ícones"><input type="checkbox" id="optAts"> Modo ATS</label>
+  <label><input type="checkbox" id="optPhoto"> Com foto / With photo</label>
+  <span id="photoCtrls" style="display:contents">
+  <label>Foto / Photo
+    <select id="photoFile"><option value="a">A</option><option value="b">B</option></select>
+  </label>
+  <label>Posição / Position
+    <select id="photoSide"><option value="right">Direita / Right</option><option value="left">Esquerda / Left</option></select>
+  </label>
+  <label>Tamanho / Size <input type="range" id="ps" min="24" max="60" step="1" value="34"></label>
+  <label>Zoom <input type="range" id="pz" min="1" max="3" step="0.05" value="1"></label>
+  <label>X <input type="range" id="px" min="0" max="100" value="50"></label>
+  <label>Y <input type="range" id="py" min="0" max="100" value="50"></label>
+  </span>
+  <button id="print">Imprimir / Print (PDF)</button>
+  <label>JSON <input type="file" id="file" accept=".json"></label>
+  <div id="paletteInfo" style="flex-basis:100%;text-align:center;color:#555;font-size:12px"></div>
+</div>
+
+<details class="ats">
+  <summary>Analisar vaga (ATS) / Job match</summary>
+  <textarea id="jobText" placeholder="Cole aqui a descrição da vaga / Paste the job description here"></textarea>
+  <button id="analyze">Analisar / Analyze</button>
+  <div id="atsResult"></div>
+</details>
+
+<main id="cv"></main>
+<div id="measure" class="measure"></div>
+
+<script id="embedded" type="application/json">{"personal":{"name":"Augustinho Celestino","fullName":"Augustinho Celestino de Freitas Junior","email":"augustinhocelestino@gmail.com","phone":"+55 (12) 98858-3383","location":"São Paulo, SP","linkedin":"https://www.linkedin.com/in/augustinhocelestino/","title":{"pt":"Solutions Architect | Senior","en":"Solutions Architect | Senior"},"stack":["Angular",".NET","Azure","Kubernetes","Azure DevOps"]},"labels":{"pt":{"contact":"Contato","summary":"Resumo Profissional","experience":"Experiência Profissional","education":"Formação Acadêmica","languages":"Idiomas","segment":"Segmento","present":"Atual"},"en":{"contact":"Contact","summary":"Professional Summary","experience":"Professional Experience","education":"Education","languages":"Languages","segment":"Industry","present":"Present"}},"summary":{"pt":"Arquiteto de Soluções e Full Stack Developer Sênior com mais de 7 anos de experiência em soluções complexas para o setor financeiro e corporativo, com base sólida em .NET, Angular, SQL Server e Oracle. Atualmente atuo na análise e no enquadramento de demandas de negócio, na definição de arquitetura e stack e no planejamento de implementações, com forte foco em Azure, Azure DevOps (pipelines e releases), Kubernetes e CI/CD. Possuo experiência em microsserviços, Design System, API Gateway e integração com SAP, além de conhecimento aprofundado em segurança e governança de TI. Atuei como Tech Lead e Scrum Master, liderando equipes, promovendo boas práticas (Clean Code, SOLID, DDD) e colaboração ágil. Busco desafios de modernização de sistemas legados e evolução de entrega contínua, sempre com foco em escalabilidade, qualidade e valor real para o negócio.","en":"Senior Solutions Architect and Full Stack Developer with over 7 years of experience delivering complex solutions for the financial and corporate sectors, built on a solid foundation in .NET, Angular, SQL Server and Oracle. I currently analyze and frame business demands, define architecture and technology stacks, and plan implementations, with a strong focus on Azure, Azure DevOps (pipelines and releases), Kubernetes and CI/CD. Experienced in microservices, Design Systems, API Gateway and SAP integration, with in-depth knowledge of security and IT governance. Former Tech Lead and Scrum Master, leading teams and promoting best practices (Clean Code, SOLID, DDD) and agile collaboration. I seek legacy modernization and continuous delivery challenges, always focused on scalability, quality and real business value."},"experience":[{"company":"Banco Rendimento","location":"São Paulo, SP","workMode":{"pt":"Híbrido","en":"Hybrid"},"segment":{"pt":"Setor Bancário","en":"Banking"},"role":{"pt":"Solutions Architect | Sênior","en":"Senior Solutions Architect"},"start":{"pt":"Abr 2025","en":"Apr 2025"},"end":{"pt":"Atual","en":"Present"},"tech":[".NET","Angular","SQL Server","Kubernetes","Azure","Azure DevOps","CI/CD","Docker","Azure Functions","Microservices"],"highlights":{"pt":["Atuação como arquiteto de soluções: análise e enquadramento das demandas de negócio e planejamento das implementações e das tecnologias a serem aplicadas.","Definição de arquitetura e stack com .NET, Angular e SQL, com foco em escalabilidade, segurança e aderência às necessidades do negócio.","Forte atuação em Azure DevOps, estruturando pipelines de build e releases para entrega contínua.","Orquestração e implantação de aplicações em Kubernetes e uso de serviços do Azure.","Definição de padrões de API, mensageria e segurança (OAuth2/JWT, Swagger/OpenAPI, Azure API Management) e registro de decisões em ADRs.","Mentoria técnica dos times e gestão de dívida técnica, com documentação via diagramas C4/UML e Wiki."],"en":["Acting as solutions architect: analyzing and framing business demands and planning the implementation and the technologies to be applied.","Defining architecture and stack with .NET, Angular and SQL, focused on scalability, security and alignment with business needs.","Strong work with Azure DevOps, structuring build pipelines and releases for continuous delivery.","Orchestrating and deploying applications on Kubernetes and using Azure services.","Defined API, messaging and security standards (OAuth2/JWT, Swagger/OpenAPI, Azure API Management) and recorded decisions in ADRs.","Technical mentoring of teams and technical debt management, with documentation via C4/UML diagrams and Wiki."]},"description":{"pt":["Atuo como Arquiteto de Soluções Sênior: as demandas de negócio chegam e cabe a mim entendê-las, enquadrá-las e planejar as implementações e as tecnologias que serão aplicadas em cada solução.","Trabalho com .NET, Angular e SQL, além de Kubernetes, CI/CD e Azure, com foco bastante forte em Azure DevOps, estruturando pipelines e releases para garantir entregas contínuas, seguras e padronizadas.","Conduzo o ciclo completo da solução: do entendimento da demanda e levantamento de requisitos à definição da arquitetura, com microsserviços, arquitetura orientada a eventos e Clean Architecture quando fazem sentido, registrando as decisões em ADRs e documentando com diagramas C4 e UML.","Defino padrões de APIs (ASP.NET Core Web API, Swagger/OpenAPI, OAuth2 e JWT, Azure API Management) e de integração com mensageria, além de orientar modelagem de dados, T-SQL e uso de cache com Redis. Atuo com containers Docker e Kubernetes, Azure Functions e App Service, e conduzo mentoria técnica e gestão de dívida técnica junto aos times de desenvolvimento."],"en":["I work as a Senior Solutions Architect: business demands come in and it is up to me to understand and frame them, and to plan the implementations and the technologies to be applied in each solution.","I work with .NET, Angular and SQL, plus Kubernetes, CI/CD and Azure, with a very strong focus on Azure DevOps, structuring pipelines and releases to ensure continuous, secure and standardized deliveries.","I drive the full solution cycle: from understanding the demand and gathering requirements to defining the architecture, using microservices, event-driven architecture and Clean Architecture where they make sense, recording decisions in ADRs and documenting with C4 and UML diagrams.","I define API standards (ASP.NET Core Web API, Swagger/OpenAPI, OAuth2 and JWT, Azure API Management) and messaging-based integration, and guide data modeling, T-SQL and Redis caching. I work with Docker and Kubernetes containers, Azure Functions and App Service, and provide technical mentoring and technical debt management to development teams."]}},{"company":"BNP Paribas Personal Finance","location":"São Paulo, SP","segment":{"pt":"Setor Bancário","en":"Banking"},"role":{"pt":"Full Stack Developer Sênior | Team Member","en":"Senior Full Stack Developer | Team Member"},"start":{"pt":"Jan 2025","en":"Jan 2025"},"end":{"pt":"Mar 2025","en":"Mar 2025"},"tech":[".NET Core","Angular","SQL Server","Oracle"],"description":{"pt":["Atuei como Desenvolvedor Full Stack Sênior em projetos desafiadores de desenvolvimento e manutenção de aplicações com .NET Core, Angular, SQL Server e Oracle. Meu foco principal foi garantir soluções robustas, escaláveis e seguras.","No dia a dia, apliquei Clean Code, princípios SOLID e Design Patterns para manter o código legível, modular e eficiente. Também identifiquei e corrigi vulnerabilidades de segurança, usando técnicas e ferramentas de análise estática e dinâmica para fortalecer as aplicações e mitigar riscos, com ajustes constantes em conformidade com padrões de segurança.","Atuei em ambiente ágil, participando de sprints, plannings, reviews e demais cerimônias do Scrum, com intensa prática de code review e troca de ideias com o time para otimizar processos e melhorar a qualidade das entregas, em um ambiente com múltiplos sistemas e integrações complexas.","Desenvolvi APIs com ASP.NET Core Web API e acesso a dados com Entity Framework Core e Dapper, além de procedures e tuning de consultas em T-SQL, escrevendo testes automatizados (xUnit, Moq) para garantir a qualidade das entregas."],"en":["Worked as a Senior Full Stack Developer on challenging projects involving the development and maintenance of applications with .NET Core, Angular, SQL Server and Oracle. My main focus was ensuring robust, scalable and secure solutions.","Day to day, I applied Clean Code, SOLID principles and Design Patterns to keep code readable, modular and efficient. I also identified and fixed security vulnerabilities using static and dynamic analysis tools and techniques to harden applications and mitigate risks, with constant adjustments to meet security standards.","I worked in an agile environment, taking part in sprints, planning, reviews and other Scrum ceremonies, with heavy code review practice and idea exchange with the team to optimize processes and improve delivery quality, in an environment with multiple systems and complex integrations.","I built APIs with ASP.NET Core Web API and data access with Entity Framework Core and Dapper, plus T-SQL procedures and query tuning, writing automated tests (xUnit, Moq) to ensure delivery quality."]},"highlights":{"pt":["Desenvolvimento e manutenção de aplicações com .NET Core, Angular, SQL Server e Oracle, com foco em robustez, escalabilidade e segurança.","Aplicação de Clean Code, princípios SOLID e Design Patterns para manter o código legível, modular e eficiente.","Identificação e correção de vulnerabilidades com análise estática e dinâmica, aderindo a padrões de segurança.","Participação em cerimônias Scrum, code reviews e integrações entre múltiplos sistemas.","APIs com ASP.NET Core, Entity Framework Core/Dapper, T-SQL e testes automatizados."],"en":["Developed and maintained applications with .NET Core, Angular, SQL Server and Oracle, focused on robustness, scalability and security.","Applied Clean Code, SOLID principles and Design Patterns to keep code readable, modular and efficient.","Identified and fixed vulnerabilities using static and dynamic analysis, ensuring compliance with security standards.","Took part in Scrum ceremonies, code reviews and integrations across multiple systems.","APIs with ASP.NET Core, Entity Framework Core/Dapper, T-SQL and automated tests."]},"workMode":{"pt":"Híbrido","en":"Hybrid"}},{"company":"Itaú Unibanco","location":"São Paulo, SP","segment":{"pt":"Setor Bancário","en":"Banking"},"role":{"pt":"Full Stack Developer Sênior | Team Member","en":"Senior Full Stack Developer | Team Member"},"start":{"pt":"Jul 2024","en":"Jul 2024"},"end":{"pt":"Dez 2024","en":"Dec 2024"},"tech":[".NET Core","Java","Angular","AWS","DDD","CI/CD"],"description":{"pt":["Atuei em projetos que envolviam tecnologias modernas e sistemas legados, o que me deu uma visão completa do desenvolvimento em um ambiente bancário robusto e complexo. Usei .NET Core, Java e Angular como stack principal e implementei soluções seguindo conceitos de DDD (Domain-Driven Design) para manter o código alinhado às regras de negócio.","Participei ativamente de processos de CI/CD, configurando pipelines automatizados e otimizando o fluxo de deploy. Na AWS, trabalhei com serviços essenciais para escalabilidade e performance, como Lambda, S3, EC2 e RDS. Parte do desafio foi integrar novos módulos e funcionalidades a sistemas legados, mantendo a estabilidade dos processos existentes e a continuidade dos serviços.","Fiz parte de um time ágil, participando de sprints, plannings e reviews, com foco em entregas rápidas e eficientes, code review, refatoração de código legado e aplicação de boas práticas. Lidei com integrações complexas, segurança e entrega contínua, sempre buscando agregar valor e atender às necessidades do negócio.","Atuei com APIs documentadas via Swagger/OpenAPI e autenticação com OAuth2 e JWT, adotando práticas de testes automatizados e TDD, e consumi mensageria e cache (Redis) para ganho de performance e desacoplamento entre sistemas legados e novos módulos."],"en":["Worked on projects involving both modern technologies and legacy systems, which gave me a complete view of development in a robust and complex banking environment. I used .NET Core, Java and Angular as the main stack and implemented solutions following DDD (Domain-Driven Design) concepts to keep the code aligned with business rules.","I actively took part in CI/CD processes, setting up automated pipelines and optimizing the deployment flow. On AWS, I worked with essential services for scalability and performance, such as Lambda, S3, EC2 and RDS. Part of the challenge was integrating new modules and features with legacy systems while keeping existing processes stable and services running.","I was part of an agile team, taking part in sprints, planning and reviews, focused on fast and efficient delivery, code review, legacy code refactoring and best practices. I dealt with complex integrations, security and continuous delivery, always aiming to add value and meet business needs.","I worked with APIs documented via Swagger/OpenAPI and OAuth2/JWT authentication, adopting automated testing and TDD practices, and used messaging and caching (Redis) for performance gains and decoupling between legacy systems and new modules."]},"highlights":{"pt":["Projetos com tecnologias modernas e sistemas legados usando .NET Core, Java e Angular, aplicando DDD para alinhar o código às regras de negócio.","Configuração de pipelines CI/CD automatizados e otimização do fluxo de deploy.","Uso de AWS (Lambda, S3, EC2 e RDS) para escalabilidade e performance.","Integração de novos módulos com sistemas legados, mantendo estabilidade e continuidade dos serviços.","Code review, refatoração de código legado e aplicação de boas práticas em time ágil.","APIs com Swagger/OpenAPI e OAuth2/JWT; testes automatizados, TDD e uso de Redis."],"en":["Worked on projects mixing modern technologies and legacy systems using .NET Core, Java and Angular, applying DDD to align code with business rules.","Set up automated CI/CD pipelines and optimized the deployment flow.","Used AWS (Lambda, S3, EC2 and RDS) for scalability and performance.","Integrated new modules with legacy systems while preserving stability and service continuity.","Code reviews, legacy code refactoring and best practices within an agile team.","APIs with Swagger/OpenAPI and OAuth2/JWT; automated tests, TDD and Redis usage."]},"workMode":{"pt":"Híbrido","en":"Hybrid"}},{"company":"BNP Paribas Personal Finance","location":"São Paulo, SP","segment":{"pt":"Setor Bancário","en":"Banking"},"role":{"pt":"Full Stack Developer Sênior | Team Member & Tech Lead","en":"Senior Full Stack Developer | Team Member & Tech Lead"},"start":{"pt":"Out 2023","en":"Oct 2023"},"end":{"pt":"Jun 2024","en":"Jun 2024"},"tech":[".NET Framework",".NET Core","Angular","SQL Server","Oracle","Design System"],"description":{"pt":["Assumi um papel mais estratégico e técnico como Full Stack Developer Sênior e Tech Lead, liderando o time em decisões críticas e orientando o desenvolvimento de soluções complexas. A stack incluía .NET Framework, .NET Core, Angular, SQL Server e Oracle, além da consolidação do uso de um Design System para garantir consistência visual e usabilidade nas interfaces.","Participei diretamente da definição de arquitetura, estruturando os projetos com foco em escalabilidade, performance e segurança, aplicando SOLID, Design Patterns e Clean Code e orientando o time a adotá-los no dia a dia. Tive forte atuação em code reviews para elevar o nível técnico das entregas, destravar impedimentos técnicos, discutir soluções viáveis e orientar a escolha de tecnologias e abordagens.","No frontend, contribuí para a adoção e evolução do Design System, garantindo experiência consistente e código reutilizável e bem estruturado. No backend, trabalhei com .NET Core e SQL Server, lidando com regras de negócio complexas e integração fluida com sistemas legados. Participei das cerimônias Scrum, ajudando na organização do time e na priorização de tarefas, equilibrando entregas rápidas com qualidade técnica e atuando como referência técnica e ponte entre desenvolvimento e stakeholders.","No frontend, utilizei Angular com TypeScript, RxJS, NgRx e Angular Material, com HTML5, CSS3 e SASS na construção de componentes do Design System, e conduzi a mentoria técnica e a capacitação dos desenvolvedores do time, além do acompanhamento e da gestão de dívida técnica."],"en":["Took on a more strategic and technical role as Senior Full Stack Developer and Tech Lead, leading the team in critical decisions and guiding the development of complex solutions. The stack included .NET Framework, .NET Core, Angular, SQL Server and Oracle, plus consolidating the use of a Design System to ensure visual consistency and usability across interfaces.","I took part directly in architecture definition, structuring projects with a focus on scalability, performance and security, applying SOLID, Design Patterns and Clean Code and guiding the team to adopt them day to day. I led code reviews to raise the technical level of deliveries, unblock technical impediments, discuss viable solutions and guide the choice of technologies and approaches.","On the frontend, I contributed to the adoption and evolution of the Design System, ensuring a consistent experience and reusable, well-structured code. On the backend, I worked with .NET Core and SQL Server, handling complex business rules and smooth integration with legacy systems. I took part in Scrum ceremonies, helping organize the team and prioritize tasks, balancing fast delivery with technical quality and acting as technical reference and bridge between development and stakeholders.","On the frontend, I used Angular with TypeScript, RxJS, NgRx and Angular Material, along with HTML5, CSS3 and SASS to build Design System components, and led technical mentoring and upskilling of the team's developers, as well as tracking and managing technical debt."]},"highlights":{"pt":["Liderança técnica do time em decisões críticas e na definição de arquitetura com foco em escalabilidade, performance e segurança.","Orientação do time em SOLID, Design Patterns e Clean Code; code reviews para elevar o nível técnico das entregas.","Adoção e evolução do Design System, garantindo consistência visual e componentes reutilizáveis.","Backend com .NET Core e SQL Server, lidando com regras de negócio complexas e integração com sistemas legados.","Referência técnica e ponte entre desenvolvimento e stakeholders; participação ativa em cerimônias Scrum.","Frontend com Angular, TypeScript, RxJS, NgRx, Angular Material e SASS; mentoria técnica e gestão de dívida técnica."],"en":["Technical leadership of the team in critical decisions and architecture definition, focused on scalability, performance and security.","Coached the team on SOLID, Design Patterns and Clean Code; led code reviews to raise delivery quality.","Drove adoption and evolution of the Design System, ensuring visual consistency and reusable components.","Backend with .NET Core and SQL Server, handling complex business rules and legacy system integration.","Technical reference and bridge between development and stakeholders; active in Scrum ceremonies.","Frontend with Angular, TypeScript, RxJS, NgRx, Angular Material and SASS; technical mentoring and technical debt management."]},"workMode":{"pt":"Híbrido","en":"Hybrid"}},{"company":"Itaú Unibanco","location":"São Paulo, SP","segment":{"pt":"Setor Bancário","en":"Banking"},"role":{"pt":"Full Stack Developer Sênior | Team Member","en":"Senior Full Stack Developer | Team Member"},"start":{"pt":"Jan 2020","en":"Jan 2020"},"end":{"pt":"Out 2023","en":"Oct 2023"},"tech":[".NET Core",".NET Framework","Angular","API Gateway","SonarQube","CI/CD"],"description":{"pt":["Atuei como Full Stack Developer Sênior no Itaú BBA em projetos robustos com .NET Core, .NET Framework, Angular e integração via Gateway, sempre com foco em segurança, qualidade de código e automação de processos.","Um dos principais desafios foi melhorar a qualidade do código e reforçar as práticas de Clean Code: configurei e otimizei o SonarQube, implementando regras de análise estática alinhadas a padrões de qualidade, segurança e boas práticas, detectando vulnerabilidades, code smells e duplicações e orientando continuamente o time a tratar os alertas e reduzir a dívida técnica.","No backend, trabalhei com integrações críticas e regras de negócio complexas; no frontend, com Angular, contribuí para a experiência do usuário e a reutilização de componentes. Participei da manutenção e evolução de pipelines CI/CD, integrando ferramentas de qualidade e deploy contínuo, além de code review, Design Patterns e refatoração de código legado para melhorar performance e manutenção. Em ambiente ágil, mantive comunicação constante com o time e stakeholders para garantir entregas de valor real ao negócio.","Em Angular, utilizei TypeScript e RxJS na construção de componentes reutilizáveis; no backend, adotei Entity Framework Core e Dapper, T-SQL e testes (xUnit, NUnit, Moq), e documentei as APIs com Swagger/OpenAPI, atuando também em Kanban e na documentação técnica do time."],"en":["Worked as a Senior Full Stack Developer at Itaú BBA on robust projects using .NET Core, .NET Framework, Angular and Gateway integration, always focused on security, code quality and process automation.","One of the main challenges was improving code quality and reinforcing Clean Code practices: I configured and tuned SonarQube, implementing static analysis rules aligned with quality, security and best-practice standards, detecting vulnerabilities, code smells and duplications, and continuously coaching the team to handle alerts and reduce technical debt.","On the backend, I worked on critical integrations and complex business rules; on the frontend, with Angular, I contributed to user experience and component reuse. I maintained and evolved CI/CD pipelines integrating code quality tools and continuous deployment, along with code review, Design Patterns and legacy refactoring to improve performance and maintainability. In an agile environment, I kept constant communication with the team and stakeholders to ensure deliveries added real business value.","In Angular, I used TypeScript and RxJS to build reusable components; on the backend, I used Entity Framework Core and Dapper, T-SQL and testing (xUnit, NUnit, Moq), and documented APIs with Swagger/OpenAPI, also working with Kanban and the team's technical documentation."]},"highlights":{"pt":["Projetos robustos com .NET Core, .NET Framework, Angular e integração via Gateway, com foco em segurança e qualidade.","Configuração e otimização do SonarQube, definindo regras de análise estática e orientando o time a reduzir a dívida técnica.","Manutenção e evolução de pipelines CI/CD integrando ferramentas de qualidade e deploy contínuo.","Code review, aplicação de Design Patterns e refatoração de código legado para melhorar performance e manutenção.","Melhoria da experiência do usuário e reutilização de componentes no Angular.","Angular com TypeScript e RxJS; backend com EF Core/Dapper, T-SQL e testes (xUnit, NUnit, Moq)."],"en":["Robust projects with .NET Core, .NET Framework, Angular and Gateway integration, focused on security and quality.","Configured and tuned SonarQube, defining static analysis rules and coaching the team to reduce technical debt.","Maintained and evolved CI/CD pipelines integrating code quality tools and continuous deployment.","Code reviews, Design Patterns and legacy refactoring to improve performance and maintainability.","Improved user experience and component reuse in Angular.","Angular with TypeScript and RxJS; backend with EF Core/Dapper, T-SQL and testing (xUnit, NUnit, Moq)."]},"workMode":{"pt":"Híbrido","en":"Hybrid"}},{"company":"SoftWillians IT Solutions","location":"Jacareí, SP","segment":{"pt":"Integração ERP/SAP","en":"ERP/SAP Integration"},"role":{"pt":"Full Stack Developer Pleno | Team Member","en":"Mid-level Full Stack Developer | Team Member"},"start":{"pt":"Fev 2019","en":"Feb 2019"},"end":{"pt":"Jan 2020","en":"Jan 2020"},"tech":[".NET Framework","SQL Server","Angular","SAP","REST","Web Services"],"description":{"pt":["Atuei como Desenvolvedor Full Stack Pleno em soluções corporativas e projetos de integração, trabalhando principalmente com .NET Framework, SQL Server e Angular, além do desafio de integrar sistemas com SAP, o que exigiu conhecimento técnico e alinhamento com processos empresariais complexos.","A integração com SAP envolvia a criação e o consumo de APIs e serviços que conectam o sistema legado aos módulos de negócio do cliente, com troca de dados via Web Services e REST APIs em formatos JSON e XML, garantindo tráfego seguro e eficiente das informações, com atenção à consistência dos dados, tratamento de erros e performance.","No backend, desenvolvi funcionalidades com .NET Framework e SQL Server, com foco em performance e escalabilidade em cenários de grandes volumes de transações. No frontend, criei interfaces dinâmicas em Angular para facilitar o uso das funcionalidades integradas ao SAP. Participei também de code review, refinamento de requisitos e discussões técnicas com o time.","Modelei dados e desenvolvi procedures em T-SQL, expondo e consumindo serviços via Web Services e REST com Swagger/OpenAPI, e utilizei webhooks e HTML5/CSS3 e TypeScript nas interfaces Angular para acompanhar eventos e integrações com o SAP."],"en":["Worked as a Mid-level Full Stack Developer on corporate solutions and integration projects, mainly with .NET Framework, SQL Server and Angular, plus the challenge of integrating systems with SAP, which required technical knowledge and alignment with complex business processes.","SAP integration involved building and consuming APIs and services connecting the legacy system to the client's business modules, exchanging data via Web Services and REST APIs in JSON and XML formats, ensuring information flowed securely and efficiently, with attention to data consistency, error handling and performance.","On the backend, I developed features with .NET Framework and SQL Server, focused on performance and scalability in high-volume transaction scenarios. On the frontend, I built dynamic Angular interfaces to make the SAP-integrated features easy to use. I also took part in code reviews, requirements refinement and technical discussions with the team.","I modeled data and developed T-SQL procedures, exposing and consuming services via Web Services and REST with Swagger/OpenAPI, and used webhooks along with HTML5/CSS3 and TypeScript in the Angular interfaces to follow events and SAP integrations."]},"highlights":{"pt":["Soluções corporativas e projetos de integração com SAP usando .NET Framework, SQL Server e Angular.","Criação e consumo de APIs e Web Services (REST, JSON e XML) conectando sistemas legados aos módulos de negócio do cliente.","Foco em consistência de dados, tratamento de erros e performance em cenários de alto volume de transações.","Interfaces Angular dinâmicas para as funcionalidades integradas; code review e refinamento de requisitos.","Modelagem de dados, procedures T-SQL, webhooks e documentação de APIs com Swagger/OpenAPI."],"en":["Corporate solutions and SAP integration projects using .NET Framework, SQL Server and Angular.","Built and consumed APIs and Web Services (REST, JSON and XML) connecting legacy systems to the client's business modules.","Focused on data consistency, error handling and performance in high-volume transaction scenarios.","Dynamic Angular interfaces for the integrated features; code review and requirements refinement.","Data modeling, T-SQL procedures, webhooks and API documentation with Swagger/OpenAPI."]},"workMode":{"pt":"Híbrido","en":"Hybrid"}}],"education":[{"institution":"Laureate Education, Inc","degree":{"pt":"MBA - Pós-Graduação em Gestão de Sistemas de Informação","en":"MBA - Postgraduate in Information Systems Management"},"year":"2018"},{"institution":"ETEP Faculdades","degree":{"pt":"Bacharelado em Análise e Desenvolvimento de Sistemas","en":"Bachelor's in Systems Analysis and Development"},"year":"2017"}],"languages":[{"name":{"pt":"Português","en":"Portuguese"},"level":{"pt":"Nativo","en":"Native"}},{"name":{"pt":"Inglês","en":"English"},"level":{"pt":"Intermediário","en":"Intermediate"}}],"skills":{"pt":{"Arquitetura":["Arquitetura de Soluções","Levantamento e enquadramento de demandas","Definição de stack tecnológica","DDD (Domain-Driven Design)","Design System","Modernização de sistemas legados","Microsserviços","Arquitetura orientada a eventos","Clean Architecture","Diagramas C4 e UML","ADR (registro de decisões de arquitetura)"],"Backend":[".NET Core",".NET Framework","C#","Java","REST APIs","Web Services (JSON / XML)","API Gateway","ASP.NET Core Web API","Entity Framework Core / Dapper","Minimal APIs","Testes (xUnit, NUnit, Moq)"],"Frontend":["Angular","Design System","Componentização e reutilização","TypeScript","RxJS","NgRx","Angular Material","HTML5, CSS3 e SASS"],"Dados":["SQL Server","Oracle","Redis","T-SQL (procedures e tuning)","Modelagem de dados"],"Integração":["Integração com SAP","API Gateway","REST / Web Services","Integração com sistemas legados","Mensageria (RabbitMQ, Kafka ou Azure Service Bus)","OAuth2 e JWT","Swagger / OpenAPI","Azure API Management","Webhooks"],"Cloud & DevOps":["Azure","Azure DevOps (Pipelines e Releases)","Kubernetes (K8s)","AWS (Lambda, S3, EC2, RDS)","CI/CD (Integração e Entrega Contínuas)","Docker","Azure Functions / App Service"],"Qualidade & Segurança":["SonarQube","Análise estática e dinâmica","Correção de vulnerabilidades","Code Review","Refatoração","Governança de TI"],"Práticas & Liderança":["Clean Code","SOLID (princípios de design OO)","Design Patterns","Scrum / Ágil","Tech Lead","Scrum Master","Kanban","Mentoria e capacitação de times","Gestão de dívida técnica","TDD (Test-Driven Development)","Documentação técnica e Wiki"]},"en":{"Architecture":["Solutions Architecture","Demand analysis and framing","Technology stack definition","DDD (Domain-Driven Design)","Design System","Legacy system modernization","Microservices","Event-driven architecture","Clean Architecture","C4 and UML diagrams","ADR (architecture decision records)"],"Backend":[".NET Core",".NET Framework","C#","Java","REST APIs","Web Services (JSON / XML)","API Gateway","ASP.NET Core Web API","Entity Framework Core / Dapper","Minimal APIs","Testing (xUnit, NUnit, Moq)"],"Frontend":["Angular","Design System","Component reuse","TypeScript","RxJS","NgRx","Angular Material","HTML5, CSS3 and SASS"],"Data":["SQL Server","Oracle","Redis","T-SQL (procedures and tuning)","Data modeling"],"Integration":["SAP integration","API Gateway","REST / Web Services","Legacy system integration","Messaging (RabbitMQ, Kafka or Azure Service Bus)","OAuth2 and JWT","Swagger / OpenAPI","Azure API Management","Webhooks"],"Cloud & DevOps":["Azure","Azure DevOps (Pipelines and Releases)","Kubernetes (K8s)","AWS (Lambda, S3, EC2, RDS)","CI/CD (Continuous Integration and Delivery)","Docker","Azure Functions / App Service"],"Quality & Security":["SonarQube","Static and dynamic analysis","Vulnerability remediation","Code Review","Refactoring","IT Governance"],"Practices & Leadership":["Clean Code","SOLID (OO design principles)","Design Patterns","Scrum / Agile","Tech Lead","Scrum Master","Kanban","Team mentoring and upskilling","Technical debt management","TDD (Test-Driven Development)","Technical documentation and Wiki"]}}}</script>
+<script>
+// [principal, fundo suave, secundária]
+const PALETTES = {
+  "Azul / Blue":      ["#1f4e79", "#e8eff6", "#d97706"],
+  "Grafite / Graphite": ["#333333", "#eeeeee", "#c2410c"],
+  "Verde / Green":    ["#2e6b4f", "#e6f1ec", "#b7791f"],
+  "Vinho / Burgundy": ["#7a2038", "#f6e9ed", "#0f766e"],
+  "Roxo / Purple":    ["#5b3f8c", "#eee9f6", "#e11d74"],
+  "Teal":             ["#0f766e", "#e0f2f1", "#e76f51"],
+  "Laranja / Orange": ["#b45309", "#fdf0e1", "#1e3a5f"]
+};
+
+// Significado de cada cor (principal + secundária)
+const PALETTE_INFO = {
+  "Azul / Blue": {
+    pt: "Azul: confiança, estabilidade e profissionalismo (padrão em bancos e TI). Âmbar: energia e atenção, destaca sem agredir.",
+    en: "Blue: trust, stability and professionalism (standard in banking and IT). Amber: energy and attention, highlights without clashing."
+  },
+  "Grafite / Graphite": {
+    pt: "Grafite: sobriedade, seriedade e neutralidade. Laranja queimado: dinamismo e iniciativa.",
+    en: "Graphite: sobriety, seriousness and neutrality. Burnt orange: dynamism and initiative."
+  },
+  "Verde / Green": {
+    pt: "Verde: crescimento, equilíbrio e segurança. Dourado: valor, experiência e excelência.",
+    en: "Green: growth, balance and safety. Gold: value, experience and excellence."
+  },
+  "Vinho / Burgundy": {
+    pt: "Vinho: sofisticação, autoridade e liderança. Verde-azulado: equilíbrio e modernidade em contraste.",
+    en: "Burgundy: sophistication, authority and leadership. Teal: balance and modernity as contrast."
+  },
+  "Roxo / Purple": {
+    pt: "Roxo: criatividade, inovação e visão estratégica. Magenta: ousadia e energia.",
+    en: "Purple: creativity, innovation and strategic vision. Magenta: boldness and energy."
+  },
+  "Teal": {
+    pt: "Verde-azulado: clareza, tecnologia, calma e inovação. Coral: proximidade e criatividade.",
+    en: "Teal: clarity, technology, calm and innovation. Coral: approachability and creativity."
+  },
+  "Laranja / Orange": {
+    pt: "Laranja: energia, entusiasmo e proatividade. Azul-marinho: confiança e solidez.",
+    en: "Orange: energy, enthusiasm and proactivity. Navy: trust and solidity."
+  }
+};
+function showPaletteInfo() {
+  const info = PALETTE_INFO[$("palette").value];
+  $("paletteInfo").textContent = info ? info[state.lang] : "";
+}
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+let data = JSON.parse($("embedded").textContent);
+const state = { lang: localStorage.getItem("cv-lang") || "pt" };
+const OPTS = { mode: "bullets", fs: 13, optPhoto: true, photoFile: "a", photoSide: "right", ps: 34, pz: 1, px: 50, py: 50, optSummary: true, optSkills: true, optTags: true, optLangs: true,
+               ...JSON.parse(localStorage.getItem("cv-opts") || "{}") };
+
+const ICONS = {
+  mail: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',
+  phone: '<svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg>',
+  link: '<svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v6h-4v-6a2 2 0 0 0-4 0v6h-4v-6a6 6 0 0 1 6-6Z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>',
+  pin: '<svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>'
+};
+
+function render() {
+  const l = state.lang, L = data.labels[l], p = data.personal;
+  const CL = l === "pt" ? { mail: "E-mail", phone: "Telefone", loc: "Local" } : { mail: "Email", phone: "Phone", loc: "Location" };
+  document.documentElement.lang = l === "pt" ? "pt-BR" : "en";
+  document.title = `${p.name} - CV`;
+
+  const jobs = data.experience.map(j => `
+    <div class="job">
+      <div class="job-head"><strong>${esc(j.company)}</strong><span class="period">${esc(j.start[l])} – ${esc(j.end[l])}</span></div>
+      <div><span class="role">${esc(j.role[l])}</span> <span class="meta">· ${esc(j.location)}${j.workMode ? ` (${esc(j.workMode[l])})` : ""}</span></div>
+      <div class="segment"><b>${esc(L.segment)}:</b> ${esc(j.segment[l])}</div>
+      <div class="job-body">${OPTS.mode === "full"
+        ? (j.description?.[l] || []).map(t => `<p>${esc(t)}</p>`).join("")
+        : `<ul>${(j.highlights?.[l] || []).map(h => `<li>${esc(h)}</li>`).join("")}</ul>`}</div>
+      ${OPTS.optTags && j.tech?.length ? `<div class="tags">${j.tech.map(t => `<span class="tag">${esc(t)}</span>`).join("")}</div>` : ""}
+    </div>`);
+
+  const edu = data.education.map(e => `
+    <div class="edu"><span><strong>${esc(e.degree[l])}</strong> — ${esc(e.institution)}</span><span class="period">${esc(e.year)}</span></div>`);
+
+  const langs = data.languages.map(x => `${esc(x.name[l])} (${esc(x.level[l])})`).join(" · ");
+  const skills = Object.entries(data.skills[l]).map(([k, v]) => `<div><b>${esc(k)}:</b> ${v.map(esc).join(", ")}</div>`);
+
+  const headerHtml = `
+    <header class="${OPTS.photoSide === "left" ? "photo-left" : ""}">
+      <div class="head-text">
+      <h1>${esc(p.name)}</h1>
+      <div class="subtitle">${esc(p.title[l])} · ${p.stack.map(esc).join(" | ")}</div>
+      <div class="contact">
+        <span>${OPTS.optAts ? CL.mail + ":" : ICONS.mail}${esc(p.email)}</span>        <span>${OPTS.optAts ? CL.phone + ":" : ICONS.phone}${esc(p.phone)}</span>
+        ${p.location ? `<span>${OPTS.optAts ? CL.loc + ":" : ICONS.pin}${esc(p.location)}</span>` : ""}
+        <a href="${esc(p.linkedin)}">${OPTS.optAts ? "LinkedIn:" : ICONS.link}${esc(p.linkedin.replace(/^https?:\/\//, ""))}</a>
+      </div>
+      </div>
+      ${OPTS.optPhoto ? `<div class="photo"><img src="avatar_${OPTS.photoFile === "b" ? "b" : "a"}.jpg" alt="${esc(p.name)}" onerror="this.parentNode.remove()"></div>` : ""}
+    </header>`;
+
+  const sec = (title, items, cls = "", tight = false) => items.map((it, i) => ({
+    h: `<section class="${cls}">${i === 0 ? `<h2>${esc(title)}</h2>` : ""}${it}</section>`,
+    tight: tight && i < items.length - 1
+  }));
+  const blocks = [
+    { h: headerHtml },
+    ...(OPTS.optSummary ? sec(L.summary, [`<p>${esc(data.summary[l])}</p>`]) : []),
+    ...sec(L.education, edu),
+    ...(OPTS.optLangs ? sec(L.languages, [`<div>${langs}</div>`]) : []),
+    ...(OPTS.optSkills ? sec("Skills", skills, "skills", true) : []),
+    ...sec(L.experience, jobs)
+  ];
+  paginate(blocks);
+}
+
+// Distribui os blocos em folhas A4 reais, sem cortar um bloco entre páginas
+function paginate(blocks) {
+  const mm = 96 / 25.4;
+  const margin = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--page-margin")) || 16;
+  const avail = (297 - 2 * margin) * mm - 2;
+  const measure = $("measure");
+  const cls = b => `blk${b.tight ? " tight" : ""}`;
+  measure.innerHTML = blocks.map(b => `<div class="${cls(b)}">${b.h}</div>`).join("");
+  const els = [...measure.children];
+  const heights = els.map(c => c.getBoundingClientRect().height);
+  const gaps = els.map(c => parseFloat(getComputedStyle(c).marginBottom) || 0);
+  measure.innerHTML = "";
+
+  const pages = [[]];
+  let used = 0;
+  blocks.forEach((b, i) => {
+    const page = pages[pages.length - 1];
+    const need = (page.length ? gaps[i - 1] : 0) + heights[i];
+    if (page.length && used + need > avail) { pages.push([b]); used = heights[i]; }
+    else { page.push(b); used += need; }
+  });
+  // Blocos "tight" (linhas de skills) ficam agrupados para não serem afastados entre si
+  const group = pg => {
+    const out = []; let cur = [];
+    pg.forEach(b => { cur.push(b); if (!b.tight) { out.push(cur); cur = []; } });
+    if (cur.length) out.push(cur);
+    return out.map(g => g.length === 1
+      ? `<div class="blk">${g[0].h}</div>`
+      : `<div class="blk">${g.map(b => `<div class="${b.tight ? "tight" : ""}">${b.h}</div>`).join("")}</div>`).join("");
+  };
+  $("cv").innerHTML = pages.map(pg => `<div class="sheet">${group(pg)}</div>`).join("");
+}
+
+function setColor(accent, soft, accent2) {
+  const s = document.documentElement.style;
+  s.setProperty("--accent", accent);
+  s.setProperty("--accent-soft", soft);
+  if (accent2) s.setProperty("--accent2", accent2);
+}
+function softOf(hex) {
+  const n = parseInt(hex.slice(1), 16), mix = c => Math.round(c + (255 - c) * 0.9);
+  return `rgb(${mix(n >> 16)},${mix((n >> 8) & 255)},${mix(n & 255)})`;
+}
+
+$("palette").innerHTML = Object.keys(PALETTES).map(k => `<option>${k}</option>`).join("");
+$("palette").onchange = e => {
+  const [a, s, b] = PALETTES[e.target.value]; setColor(a, s, b); $("custom").value = a; $("custom2").value = b;
+  localStorage.setItem("cv-palette", e.target.value);
+  showPaletteInfo();
+};
+$("custom").oninput = e => { setColor(e.target.value, softOf(e.target.value)); $("paletteInfo").textContent = ""; };
+$("custom2").oninput = e => { setColor($("custom").value, softOf($("custom").value), e.target.value); $("paletteInfo").textContent = ""; };
+$("mode").value = OPTS.mode;
+$("photoSide").value = OPTS.photoSide;
+$("photoFile").value = OPTS.photoFile;
+$("fs").value = OPTS.fs;
+document.documentElement.style.setProperty("--fs", OPTS.fs + "px");
+$("fs").oninput = e => {
+  const v = parseFloat(e.target.value);
+  if (!(v >= 9 && v <= 18)) return;
+  OPTS.fs = v;
+  document.documentElement.style.setProperty("--fs", v + "px");
+  localStorage.setItem("cv-opts", JSON.stringify(OPTS));
+  render();
+};
+const applyPhoto = () => {
+  const s = document.documentElement.style;
+  s.setProperty("--ps", OPTS.ps + "mm");
+  s.setProperty("--pz", OPTS.pz); s.setProperty("--px", OPTS.px + "%"); s.setProperty("--py", OPTS.py + "%");
+  $("photoCtrls").style.display = OPTS.optPhoto ? "contents" : "none";
+};
+for (const id of ["ps", "pz", "px", "py"]) {
+  $(id).value = OPTS[id];
+  $(id).oninput = e => { OPTS[id] = parseFloat(e.target.value); localStorage.setItem("cv-opts", JSON.stringify(OPTS)); applyPhoto(); render(); };
+}
+for (const id of ["mode", "photoSide", "photoFile", "optSummary", "optSkills", "optTags", "optLangs", "optAts", "optPhoto"]) {
+  const el = $(id);
+  if (el.type === "checkbox") el.checked = OPTS[id];
+  el.onchange = () => {
+    OPTS[id] = el.type === "checkbox" ? el.checked : el.value;
+    localStorage.setItem("cv-opts", JSON.stringify(OPTS));
+    applyPhoto();
+    render();
+  };
+}
+applyPhoto();
+const STOP = new Set(("a o as os um uma uns umas de do da dos das em no na nos nas por para com sem sob sobre e ou mas que se como mais menos muito " +
+  "ser ter estar ao aos à às pelo pela pelos pelas seu sua seus suas nosso nossa você vaga experiência conhecimento conhecimentos " +
+  "the and or of to in on for with a an is are be as at by from this that you your we our will have has not but it its their they " +
+  "experience knowledge strong ability work working team role job years year plus").split(" "));
+const norm = s => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+const tokens = s => norm(s).match(/[a-z0-9#+./-]*[a-z0-9#+]/g) || [];
+
+$("analyze").onclick = () => {
+  const job = tokens($("jobText").value).filter(t => t.length > 1 && !STOP.has(norm(t)) && !/^\d+$/.test(t));
+  const freq = new Map();
+  job.forEach(t => freq.set(t, (freq.get(t) || 0) + 1));
+  const cv = new Set(tokens($("cv").innerText));
+  const top = [...freq].sort((a, b) => b[1] - a[1]).slice(0, 40);
+  if (!top.length) { $("atsResult").textContent = ""; return; }
+  const hit = top.filter(([t]) => cv.has(t));
+  const chip = ([t, n], ok) => `<span class="kw ${ok ? "ok" : "miss"}">${esc(t)}${n > 1 ? ` ×${n}` : ""}</span>`;
+  $("atsResult").innerHTML =
+    `<p><b>${Math.round(hit.length / top.length * 100)}%</b> (${hit.length}/${top.length})</p>` +
+    `<div>${hit.map(x => chip(x, true)).join("")}</div>` +
+    `<p>Ausentes / Missing:</p><div>${top.filter(([t]) => !cv.has(t)).map(x => chip(x, false)).join("")}</div>`;
+};
+
+$("lang").value = state.lang;
+$("lang").onchange = e => { state.lang = e.target.value; localStorage.setItem("cv-lang", state.lang); render(); showPaletteInfo(); };
+$("print").onclick = () => window.print();
+$("file").onchange = async e => { const f = e.target.files[0]; if (f) { data = JSON.parse(await f.text()); render(); } };
+
+const saved = localStorage.getItem("cv-palette");
+if (saved && PALETTES[saved]) $("palette").value = saved;
+$("palette").onchange({ target: $("palette") });
+render();
+document.fonts?.ready.then(render);
+</script>
+</body>
+</html>
